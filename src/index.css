@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+html {
+  scroll-behavior: smooth;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-ligatures: contextual;
+}
+
+/* Theme switch: circular reveal via the View Transitions API */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Fallback for browsers without View Transitions: soft color fade */
+html.theme-fade,
+html.theme-fade * {
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease,
+    text-decoration-color 0.35s ease !important;
+}
+
+/* Scroll-in reveal: only applies when the user hasn't asked for reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 500ms ease-out, transform 500ms ease-out;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Mobile nav dropdown */
+  .menu-panel {
+    transition: opacity 220ms ease-out, transform 220ms ease-out;
+    transform-origin: top;
+  }
+
+  /* Hamburger <-> close icon morph */
+  .menu-line {
+    transition: transform 300ms ease, opacity 200ms ease;
+  }
+
+  /* Floating chat button: pops in shortly after the page loads */
+  .chat-fab {
+    animation: fab-in 600ms ease-out 500ms both;
+  }
+
+  /* Chat bubble <-> close icon crossfade on the floating button */
+  .fab-icon {
+    transition: opacity 200ms ease;
+  }
+
+  /* FAQ chat window open/close */
+  .chat-window {
+    transition: opacity 200ms ease-out, transform 200ms ease-out;
+  }
+}
+
+@keyframes fab-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

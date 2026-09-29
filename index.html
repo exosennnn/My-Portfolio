@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jay Mark Almojuela — Developer</title>
+    <meta name="description" content="Jay Mark Almojuela is a BS Information Technology student and developer building desktop and web apps with Python, JavaScript, Vue, React, and C++." />
+    <meta property="og:title" content="Jay Mark Almojuela — Developer" />
+    <meta property="og:description" content="IT student and developer. Desktop and web apps with Python, JavaScript, Vue, React, and C++." />
+    <meta property="og:type" content="website" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('theme');
+          var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
