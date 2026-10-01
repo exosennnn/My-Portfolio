@@ -71,13 +71,13 @@ const PROJECTS: Project[] = [
 ];
 
 const STACK = [
-  { label: 'Languages', items: ['Python', 'JavaScript', 'C++', 'HTML', 'CSS', 'PHP', 'Java'] },
-  { label: 'Frameworks', items: ['Vue.js', 'React', 'Tailwind CSS', 'Vite'] },
+  { label: 'Languages', items: ['Python', 'JavaScript', 'C++', 'HTML', 'CSS', 'PHP', 'Java', 'CSharp'] },
+  { label: 'Frameworks', items: ['Vue.js', 'React', 'Tailwind CSS', 'Vite', 'BootStrap5'] },
   { label: 'Databases', items: ['MySQL'] },
   { label: 'Tools', items: ['Git', 'GitHub', 'VS Code', 'npm', 'figma'] },
 ];
 
-const FILTERS = ['All', 'Python', 'JavaScript', 'Vue', 'C++'];
+const FILTERS = ['All', 'Python', 'JavaScript', 'C++'];
 
 const FAQ_DATA = [
   {
