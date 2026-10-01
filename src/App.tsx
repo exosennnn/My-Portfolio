@@ -65,15 +65,23 @@ const PROJECTS: Project[] = [
     language: 'JavaScript',
     description:
       'FinMetrics is a responsive, client-side personal finance manager built with Vue 3 and Tailwind CSS for multi-wallet tracking, monthly budgeting, visual analytics, and savings goal management.',
-    tags: ['Vue.js', 'Tailwind CSS'],
+    tags: ['Vue.js', 'Tailwind CSS', 'Vite'],
     url: 'https://github.com/exosennnn/FinMetrics',
+  },
+  {
+    title: 'SafeRoute Hub',
+    language: 'JavaScript',
+    description:
+      'SafeRoute Hub is an innovative, production-grade Progressive Web App (PWA) designed to serve as a centralized platform for disaster management, emergency response, and crisis coordination within communities.',
+    tags: ['React.js', 'Tailwind CSS', 'Supabase', 'Vite'],
+    url: 'https://github.com/exosennnn/SafeRoute-Hub',
   },
 ];
 
 const STACK = [
   { label: 'Languages', items: ['Python', 'JavaScript', 'C++', 'HTML', 'CSS', 'PHP', 'Java', 'CSharp'] },
-  { label: 'Frameworks', items: ['Vue.js', 'React', 'Tailwind CSS', 'Vite', 'BootStrap5'] },
-  { label: 'Databases', items: ['MySQL'] },
+  { label: 'Frameworks', items: ['Vue.js', 'React', 'Tailwind CSS', 'Vite', 'BootStrap5', 'Laravel'] },
+  { label: 'Databases', items: ['MySQL', 'PostgreSQL', 'Supabase'] },
   { label: 'Tools', items: ['Git', 'GitHub', 'VS Code', 'npm', 'figma'] },
 ];
 
