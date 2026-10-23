@@ -110,3 +110,50 @@ html.theme-fade * {
     transform: none;
   }
 }
+
+/* Background: dot grid with a radial fade, plus two slow blurred blobs */
+.bg-dots {
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.14) 1px, transparent 1px);
+  background-size: 24px 24px;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 85%);
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 85%);
+}
+.dark .bg-dots {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+}
+
+.bg-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.35;
+  animation: blob-drift 26s ease-in-out infinite alternate;
+}
+.dark .bg-blob {
+  opacity: 0.16;
+}
+.blob-a {
+  width: 460px;
+  height: 460px;
+  top: -140px;
+  right: -100px;
+  background: #a3a3a3;
+}
+.blob-b {
+  width: 380px;
+  height: 380px;
+  bottom: -160px;
+  left: 25%;
+  background: #525252;
+  animation-duration: 32s;
+  animation-delay: -10s;
+}
+
+@keyframes blob-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(70px, 40px, 0) scale(1.12); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-blob { animation: none; }
+}

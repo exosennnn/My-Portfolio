@@ -1,5 +1,12 @@
 import { useEffect, useState, type FormEvent, type MouseEvent, type ReactNode } from 'react';
 import Reveal from './components/Reveal';
+import Background from './components/Background';
+import Tour from './components/Tour';
+import MiniGame, { TapToPlay } from './components/MiniGame';
+import TwistPhoto from './components/TwistPhoto';
+import Typewriter from './components/Typewriter';
+import QuoteBuilder from './components/QuoteBuilder';
+import JourneyTimeline from './components/JourneyTimeline';
 
 const EMAIL = 'almojuelajaymark0@gmail.com'; // TODO: put your real email here
 
@@ -198,17 +205,13 @@ const NOW_ITEMS = [
   'Getting deeper into React and Tailwind.',
 ];
 
-// TODO: list the tools and setup you actually use
-const USES = [
-  { group: 'Editor & tools', items: ['VS Code', 'Git', 'GitHub', 'npm', 'Figma'] },
-  { group: 'Browser & extensions', items: ['Chrome'] },
-];
+const HERO_ROLES = ['Web Developer', 'Vue & React builder', 'IT student'];
 
 const STACK = [
   { label: 'Languages', items: ['Python', 'JavaScript', 'C++', 'HTML', 'CSS', 'PHP', 'Java', 'CSharp'] },
-  { label: 'Frameworks', items: ['Vue.js', 'React', 'Tailwind CSS', 'Vite', 'BootStrap5', 'Laravel'] },
+  { label: 'Frameworks', items: ['Vue.js', 'React', 'Tailwind CSS', 'Vite', 'BootStrap5', 'Laravel', 'Node.js', 'TypeScript'] },
   { label: 'Databases', items: ['MySQL', 'PostgreSQL', 'Supabase'] },
-  { label: 'Tools', items: ['Git', 'GitHub', 'VS Code', 'npm', 'figma'] },
+  { label: 'Tools', items: ['Git', 'GitHub', 'VS Code', 'npm', 'figma', 'XAMPP'] },
 ];
 
 type Milestone = {
@@ -240,14 +243,17 @@ const JOURNEY: { phase: string; items: Milestone[] }[] = [
       {
         title: 'PHP, Bootstrap & JavaScript',
         description: 'Server-side scripting with PHP, responsive layouts with Bootstrap, and interactivity with JavaScript.',
+        sem: 'Sem 1'
       },
       {
         title: 'MySQL Databases',
         description: 'Designing and querying relational databases to store and retrieve application data.',
+        sem: 'Sem 1'
       },
       {
         title: 'Data Structures & Algorithms',
         description: 'Core data structures and algorithmic problem-solving for writing efficient code.',
+        sem: 'Sem 1'
       },
       {
         title: 'Java OOP & Python',
@@ -267,6 +273,11 @@ const JOURNEY: { phase: string; items: Milestone[] }[] = [
       {
         title: 'Vue.js & Tailwind CSS',
         description: 'Building modern front-end interfaces with a component framework and utility-first styling.',
+        current: true,
+      },
+      {
+        title: 'NodeJS',
+        description: 'Learning to build server-side applications with Node.js and JavaScript.',
         current: true,
       },
     ],
@@ -311,7 +322,7 @@ const FAQ_DATA = [
   {
     id: 'stack',
     q: "What's his tech stack?",
-    a: 'Languages: Python, JavaScript, C++, HTML, CSS, PHP, Java. Frameworks: Vue.js, React, Tailwind CSS, Vite. Database: MySQL. Tools: Git, GitHub, VS Code, npm, Figma.',
+    a: 'Languages: Python, JavaScript, C++, HTML, CSS, PHP, Java. Frameworks: Vue.js, React, Tailwind CSS, Vite. Database: MySQL. Tools: Git, GitHub, VS Code, npm, Figma, XAMPP.',
   },
   {
     id: 'projects',
@@ -337,10 +348,11 @@ const NAV = [
   { id: 'services', label: 'Services', to: '/services' },
   { id: 'journey', label: 'Journey', to: '/journey' },
   { id: 'blog', label: 'Blog', to: '/blog' },
-  { id: 'now', label: 'Now', to: '/now' },
-  { id: 'uses', label: 'Uses', to: '/uses' },
   { id: 'contact', label: 'Contact', to: '/contact' },
 ];
+
+// Sidebar groups: Home on its own, then the work pages, then everything else
+const NAV_GROUPS = [NAV.slice(0, 1), NAV.slice(1, 4), NAV.slice(4)];
 
 const GITHUB_USER = 'exosennnn';
 
@@ -519,8 +531,6 @@ const PAGE_META: Record<string, string> = {
   '/services': 'Services — Jay Mark Almojuela',
   '/contact': 'Contact — Jay Mark Almojuela',
   '/blog': 'Blog — Jay Mark Almojuela',
-  '/now': 'Now — Jay Mark Almojuela',
-  '/uses': 'Uses — Jay Mark Almojuela',
   '/journey': 'Journey — Jay Mark Almojuela',
 };
 
@@ -730,54 +740,77 @@ export default function App() {
     'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-neutral-900 dark:focus-visible:outline-neutral-100 rounded-sm';
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-mono text-sm leading-relaxed selection:bg-neutral-900 selection:text-white dark:selection:bg-neutral-100 dark:selection:text-neutral-900">
+    <div className="isolate min-h-screen text-neutral-900 dark:text-neutral-100 font-mono text-sm leading-relaxed selection:bg-neutral-900 selection:text-white dark:selection:bg-neutral-100 dark:selection:text-neutral-900">
+      <Background />
+
       {/* Desktop sidebar */}
       <aside className="hidden sm:flex fixed inset-y-0 left-0 w-56 flex-col justify-between border-r border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 px-8 py-10 z-10">
         <div>
           <a href="/" onClick={navigate('/')} className={`font-bold ${focusRing}`}>Jay Mark.</a>
-          <nav className="mt-10 flex flex-col gap-3 text-neutral-500 dark:text-neutral-400">
-            {NAV.map((n) => (
-              <a
-                key={n.id}
-                href={n.to}
-                onClick={navigate(n.to)}
-                aria-current={path === n.to ? 'true' : undefined}
-                className={`transition-colors hover:text-neutral-900 dark:hover:text-neutral-100 ${focusRing} ${
-                  path === n.to ? 'text-neutral-900 dark:text-neutral-100 font-bold' : ''
+          <nav aria-label="Main" className="mt-10 flex flex-col gap-5">
+            {NAV_GROUPS.map((group, gi) => (
+              <div
+                key={gi}
+                className={`flex flex-col gap-3 text-neutral-500 dark:text-neutral-400 ${
+                  gi > 0 ? 'pt-5 border-t border-neutral-200 dark:border-neutral-800' : ''
                 }`}
               >
-                {path === n.to ? '› ' : ''}{n.label}
-              </a>
+                {group.map((n) => (
+                  <a
+                    key={n.id}
+                    href={n.to}
+                    onClick={navigate(n.to)}
+                    aria-current={path === n.to ? 'true' : undefined}
+                    className={`transition-colors hover:text-neutral-900 dark:hover:text-neutral-100 ${focusRing} ${
+                      path === n.to ? 'text-neutral-900 dark:text-neutral-100 font-bold' : ''
+                    }`}
+                  >
+                    {path === n.to ? '› ' : ''}{n.label}
+                  </a>
+                ))}
+              </div>
             ))}
           </nav>
         </div>
-        <div className="flex flex-col gap-5">
-          <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-neutral-500 dark:text-neutral-400">
-            <a href={LINKS.github} target="_blank" rel="noreferrer" className={`hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}>github</a>
-            <a href={LINKS.linkedin} target="_blank" rel="noreferrer" className={`hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}>linkedin</a>
-            <a href={LINKS.instagram} target="_blank" rel="noreferrer" className={`hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}>instagram</a>
-            <a href={`mailto:${EMAIL}`} className={`hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}>email</a>
-            {LINKS.resume && (
-              <a href={LINKS.resume} target="_blank" rel="noreferrer" className={`hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}>resume</a>
-            )}
+
+        <div className="flex flex-col gap-4">
+          {/* Social icons and theme toggle share one row */}
+          <div className="flex items-center gap-4 text-neutral-500 dark:text-neutral-400">
+            <a href={LINKS.github} target="_blank" rel="noreferrer" aria-label="GitHub" title="GitHub" className={`hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}>
+              <Icon name="github" />
+            </a>
+            <a href={LINKS.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn" title="LinkedIn" className={`hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}>
+              <Icon name="linkedin" />
+            </a>
+            <a href={LINKS.instagram} target="_blank" rel="noreferrer" aria-label="Instagram" title="Instagram" className={`hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}>
+              <Icon name="instagram" />
+            </a>
+            <a href={`mailto:${EMAIL}`} aria-label="Email" title="Email" className={`hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}>
+              <Icon name="mail" />
+            </a>
+            <button
+              onClick={toggleTheme}
+              aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={dark ? 'Light mode' : 'Dark mode'}
+              className={`ml-auto hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}
+            >
+              {dark ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              )}
+            </button>
           </div>
-          <button
-          onClick={toggleTheme}
-          aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-          title={dark ? 'Light mode' : 'Dark mode'}
-          className={`self-start text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}
-        >
-          {dark ? (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="4" />
-              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-            </svg>
-          ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
+
+          {LINKS.resume && (
+            <a href={LINKS.resume} target="_blank" rel="noreferrer" className={`text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}>resume ↗</a>
           )}
-        </button>
+          <p className="text-xs text-neutral-400 dark:text-neutral-500"><TapToPlay>updated {LAST_UPDATED}</TapToPlay></p>
         </div>
       </aside>
 
@@ -869,14 +902,7 @@ export default function App() {
             {/* Photo: halftone portrait at /public/profile.png (white bg blends into the page) */}
             <div className="fx-rise shrink-0 w-44 sm:w-52 aspect-[4/5] bg-white rounded border border-neutral-200 dark:border-neutral-800 overflow-hidden">
               {photoOk ? (
-                <img
-                  src="/profile.png"
-                  alt="Portrait of Jay Mark Almojuela"
-                  width={416}
-                  height={520}
-                  onError={() => setPhotoOk(false)}
-                  className="w-full h-full object-cover"
-                />
+                <TwistPhoto onError={() => setPhotoOk(false)} />
               ) : (
                 <div
                   aria-hidden="true"
@@ -895,6 +921,9 @@ export default function App() {
                 </span>
               )}
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Jay Mark Almojuela</h1>
+              <p className="mt-2 h-6 text-sm text-neutral-500 dark:text-neutral-400">
+                <Typewriter words={HERO_ROLES} />
+              </p>
               <p className="mt-4 text-neutral-600 dark:text-neutral-400 max-w-lg mx-auto sm:mx-0">
                 Third-year BS Information Technology student and aspiring Web Developer. I enjoy turning ideas into functional, user-focused applications and continuously improving my skills through real-world projects.
               </p>
@@ -1099,6 +1128,7 @@ export default function App() {
                 {PRICING_NOTE && <p className="mt-12 text-neutral-500 dark:text-neutral-400">{PRICING_NOTE}</p>}
               </>
             )}
+            {!onHome && <QuoteBuilder email={EMAIL} serviceTitles={SERVICES.map((svc) => svc.title)} />}
           </Reveal>
         )}
 
@@ -1159,41 +1189,7 @@ export default function App() {
           </Reveal>
         )}
 
-        {(onHome || path === '/now') && (
-          <Reveal as="section" id="now" className="py-20">
-            <h2 className="text-xl font-bold tracking-tight mb-2">now</h2>
-            <p className="text-neutral-500 dark:text-neutral-400 mb-8">What I'm working on at the moment. Updated {NOW_UPDATED}.</p>
-            <ul className="space-y-3">
-              {NOW_ITEMS.map((item) => (
-                <li key={item} className="text-neutral-600 dark:text-neutral-400">
-                  <span className="text-neutral-400 dark:text-neutral-500 mr-2">→</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        )}
-
-        {(onHome || path === '/uses') && (
-          <Reveal as="section" id="uses" className="py-20">
-            <h2 className="text-xl font-bold tracking-tight mb-2">uses</h2>
-            <p className="text-neutral-500 dark:text-neutral-400 mb-8">The tools and setup I use day to day.</p>
-            <div className="space-y-8">
-              {USES.map((g) => (
-                <div key={g.group}>
-                  <h3 className="font-bold mb-3">{g.group}</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {g.items.map((t) => (
-                      <span key={t} className="px-2 py-0.5 text-xs rounded border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        )}
+      
 
         {(onHome || path === '/contact') && (
           <Reveal as="section" id="contact" className="py-20">
@@ -1209,7 +1205,7 @@ export default function App() {
               <p>local time {localTime} (PHT)</p>
             </div>
 
-            {FORM_ENDPOINT && <ContactForm />}
+            {FORM_ENDPOINT && !onHome && <ContactForm />}
 
             <ul className="space-y-2">
               <li className="flex items-center flex-wrap">
@@ -1237,52 +1233,16 @@ export default function App() {
         {/* GitHub */}
         {onHome && <GithubSection />}
 
-        {path === '/journey' && (
-          <section className="py-20">
-          <div className="mt-14">
-            <h3 className="font-bold mb-2">Development Journey</h3>
-            <p className="text-neutral-500 dark:text-neutral-400 mb-10">
-              Key technical milestones and skills developed over time.
-            </p>
-          <div className="space-y-10">
-            {JOURNEY.map((group) => (
-              <div key={group.phase}>
-                <p className="text-xs text-neutral-400 dark:text-neutral-500 mb-4">// {group.phase.toLowerCase()}</p>
-                <ol className="border-l border-neutral-200 dark:border-neutral-800 space-y-6">
-                  {group.items.map((m) => (
-                    <li key={m.title} className="relative pl-6">
-                      <span
-                        aria-hidden="true"
-                        className={`absolute -left-[4px] top-[7px] h-2 w-2 rounded-full ${
-                          m.current
-                            ? 'bg-neutral-900 dark:bg-neutral-100'
-                            : 'bg-white dark:bg-neutral-950 border border-neutral-400 dark:border-neutral-600'
-                        }`}
-                      />
-                      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                        <h3 className="font-bold">{m.title}</h3>
-                        {m.sem && <span className="text-xs text-neutral-400 dark:text-neutral-500">{m.sem}</span>}
-                        {m.current && (
-                          <span className="text-xs text-neutral-900 dark:text-neutral-100">● now</span>
-                        )}
-                      </div>
-                      <p className="mt-1 text-neutral-600 dark:text-neutral-400">{m.description}</p>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            ))}
-          </div>
-          </div>
-          </section>
-        )}
+        {path === '/journey' && <JourneyTimeline groups={JOURNEY} />}
 
         </div>
 
         <footer className="py-10 border-t border-neutral-200 dark:border-neutral-800 text-xs text-neutral-400 dark:text-neutral-500">
-          © {new Date().getFullYear()} Jay Mark Almojuela
-          <span className="block mt-1">last updated {LAST_UPDATED}</span>
+          <TapToPlay>© {new Date().getFullYear()} Jay Mark Almojuela</TapToPlay>
         </footer>
+
+        {onHome && <MiniGame />}
+        {onHome && <Tour />}
 
         {/* Floating FAQ chatbot */}
         {chatMounted && (
