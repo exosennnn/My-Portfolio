@@ -101,32 +101,43 @@ const PROJECTS: Project[] = [
   },
 ];
 
-// Leave empty to hide the pricing line on the Services page
-const PRICING_NOTE = '';
+// Shown under the services list on the Services page. Leave empty to hide it
+const PRICING_NOTE = 'Pricing depends on scope. Send me your requirements and I will send you a quote.';
 
-const SERVICES = [
+// timeline is a typical estimate; example is optional (add { label, url } to show a "see example" link)
+const SERVICES: {
+  title: string;
+  description: string;
+  timeline: string;
+  tags: string[];
+  example?: { label: string; url: string };
+}[] = [
   {
     title: 'Landing pages & business sites',
     description:
-      'Responsive one-page or multi-page sites for small businesses, events, and personal portfolios, built to load fast on phones.',
+      'Fast-loading, mobile-friendly sites for small businesses, events, and personal portfolios. Clear layouts that help visitors find what they need and get in touch.',
+    timeline: 'Typical timeline: 1 to 2 weeks',
     tags: ['Vue.js', 'React', 'Tailwind CSS'],
   },
   {
     title: 'Web apps & dashboards',
     description:
-      'Custom web apps such as booking and reservation systems, admin dashboards, and internal tools for tracking records.',
+      'Booking and reservation systems, admin dashboards, and internal tools that replace spreadsheets and manual tracking, with an interface your staff can use right away.',
+    timeline: 'Typical timeline: 3 to 6 weeks',
     tags: ['Vue.js', 'React', 'Laravel', 'MySQL'],
   },
   {
     title: 'Database-backed systems',
     description:
-      'Database design and the back-end logic behind it, for things like queues, inventory, and record keeping.',
+      'Organized database design and back-end logic for queues, inventory, and record keeping, so your data stays accurate and easy to retrieve.',
+    timeline: 'Typical timeline: 2 to 4 weeks',
     tags: ['MySQL', 'PostgreSQL', 'Supabase', 'PHP'],
   },
   {
     title: 'Fixes & improvements',
     description:
-      'Fixing bugs, adding features, or cleaning up an existing project built with the tools listed here.',
+      'Fixing bugs, adding features, or cleaning up an existing project so it runs reliably and is easier to maintain.',
+    timeline: 'Timeline depends on the size of the change',
     tags: ['JavaScript', 'Vue.js', 'React', 'PHP'],
   },
 ];
@@ -197,6 +208,9 @@ const BLOG_POSTS: { title: string; date: string; excerpt: string; url?: string; 
     ],
   },
 ];
+
+// Rough reading time, about 200 words per minute
+const readTime = (paras: string[]) => Math.max(1, Math.round(paras.join(' ').split(/\s+/).length / 200));
 
 // TODO: update these to what you are working on right now
 const NOW_UPDATED = 'October 2026';
@@ -269,16 +283,19 @@ const JOURNEY: { phase: string; items: Milestone[] }[] = [
         title: 'System Integration',
         description: 'Learning how separate systems and components are connected so they work together as one.',
         current: true,
+        status: 'done',
       },
       {
         title: 'Vue.js & Tailwind CSS',
         description: 'Building modern front-end interfaces with a component framework and utility-first styling.',
         current: true,
+        status: 'done',
       },
       {
         title: 'NodeJS',
         description: 'Learning to build server-side applications with Node.js and JavaScript.',
         current: true,
+        status: 'done',
       },
     ],
   },
@@ -289,21 +306,48 @@ const JOURNEY: { phase: string; items: Milestone[] }[] = [
         title: 'Laravel',
         description: 'Building back-end applications with the Laravel PHP framework.',
         sem: 'Vacation',
+        status: 'done',
       },
       {
         title: 'React',
         description: 'Building component-based user interfaces with React and JavaScript.',
         sem: 'Vacation',
+        status: 'done',
       },
       {
         title: 'PostgreSQL',
         description: 'Working with PostgreSQL, a relational database system, beyond MySQL.',
         sem: 'Vacation',
+        status: 'done',
       },
       {
         title: 'C#',
         description: 'Learning the C# language and its use for building applications.',
         sem: 'Vacation',
+        status: 'done',
+      },
+    ],
+  },
+  {
+    phase: 'Currently learning',
+    items: [
+      {
+        title: 'React.js',
+        description: 'Deepening my understanding of React, from component patterns and state management to performance.',
+        current: true,
+        status: 'now',
+      },
+      {
+        title: 'Node.js',
+        description: 'Going deeper into server-side JavaScript, including APIs, modules, and building back-end services.',
+        current: true,
+        status: 'now',
+      },
+      {
+        title: 'TypeScript',
+        description: 'Adding static typing to JavaScript projects to catch errors early and write more maintainable code.',
+        current: true,
+        status: 'now',
       },
     ],
   },
@@ -1093,15 +1137,29 @@ export default function App() {
             )}
 
             <div className="space-y-10">
-              {SERVICES.map((svc) => (
+              {SERVICES.map((svc, i) => (
                 <div key={svc.title} className="border-t border-neutral-200 dark:border-neutral-800 pt-6">
-                  <h3 className="font-bold">{svc.title}</h3>
+                  <h3 className="font-bold">
+                    <span className="text-neutral-400 dark:text-neutral-500 mr-3 font-normal">0{i + 1}</span>
+                    {svc.title}
+                  </h3>
                   <p className="mt-2 text-neutral-600 dark:text-neutral-400">{svc.description}</p>
-                  <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-neutral-400 dark:text-neutral-500">
+                  {!onHome && <p className="mt-3 text-sm text-neutral-500 dark:text-neutral-400">{svc.timeline}</p>}
+                  <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-neutral-600 dark:text-neutral-300">
                     {svc.tags.map((t) => (
                       <span key={t}>#{t.toLowerCase().replace(/\s+/g, '-')}</span>
                     ))}
                   </p>
+                  {svc.example && (
+                    <a
+                      href={svc.example.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`mt-4 inline-block text-sm underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-900 dark:hover:decoration-neutral-100 transition-colors ${focusRing}`}
+                    >
+                      {svc.example.label} →
+                    </a>
+                  )}
                 </div>
               ))}
             </div>
@@ -1126,6 +1184,15 @@ export default function App() {
                   </ol>
                 </div>
                 {PRICING_NOTE && <p className="mt-12 text-neutral-500 dark:text-neutral-400">{PRICING_NOTE}</p>}
+                <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-neutral-200 dark:border-neutral-800 pt-8">
+                  <p className="text-neutral-700 dark:text-neutral-300">Have a project in mind? Send me a message.</p>
+                  <a
+                    href={`mailto:${EMAIL}`}
+                    className={`inline-block rounded-md bg-neutral-900 dark:bg-neutral-100 px-5 py-2.5 text-sm font-semibold text-white dark:text-neutral-900 hover:opacity-90 transition-opacity ${focusRing}`}
+                  >
+                    Send me a message →
+                  </a>
+                </div>
               </>
             )}
             {!onHome && <QuoteBuilder email={EMAIL} serviceTitles={SERVICES.map((svc) => svc.title)} />}
@@ -1169,23 +1236,38 @@ export default function App() {
             </div>
             {!onHome && (
               <p className="text-neutral-500 dark:text-neutral-400 mb-6">
-                Short notes on what I'm learning: React, Vue, Laravel, and the projects in between.
+                Notes from building and learning in public: what worked, what broke, and what I would do differently next time.
               </p>
             )}
-            <ul className="divide-y divide-neutral-200 dark:divide-neutral-800">
+            <ul className={onHome ? 'divide-y divide-neutral-200 dark:divide-neutral-800' : 'space-y-14'}>
               {(onHome ? BLOG_POSTS.slice(0, 2) : BLOG_POSTS).map((post) => (
-                <li key={post.title} className="py-6">
-                  <p className="text-xs text-neutral-400 dark:text-neutral-500">{post.date}</p>
-                  <h3 className="mt-1 font-bold">
+                <li
+                  key={post.title}
+                  className={onHome ? 'py-6' : 'border-t border-neutral-200 dark:border-neutral-800 pt-8'}
+                >
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    {post.date}
+                    {!onHome && post.body && <span> · {readTime(post.body)} min read</span>}
+                  </p>
+                  <h3 className={`mt-2 font-bold leading-snug ${onHome ? '' : 'text-lg'}`}>
                     {post.url ? <ExtLink href={post.url}>{post.title}</ExtLink> : post.title}
                   </h3>
-                  <p className="mt-2 text-neutral-600 dark:text-neutral-400">{post.excerpt}</p>
-                  {!onHome && post.body?.map((para, i) => (
-                    <p key={i} className="mt-4 text-neutral-600 dark:text-neutral-400">{para}</p>
-                  ))}
+                  <p className="mt-3 text-neutral-600 dark:text-neutral-400">{post.excerpt}</p>
+                  {!onHome && post.body && (
+                    <div className="mt-6 space-y-4 leading-relaxed text-neutral-700 dark:text-neutral-300">
+                      {post.body.map((para, i) => (
+                        <p key={i} className={i === 0 ? 'text-neutral-900 dark:text-neutral-100 font-medium' : ''}>
+                          {para}
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
+            {!onHome && (
+              <p className="mt-16 text-neutral-500 dark:text-neutral-400">More notes coming as I keep learning.</p>
+            )}
           </Reveal>
         )}
 
