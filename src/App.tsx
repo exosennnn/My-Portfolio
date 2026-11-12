@@ -366,9 +366,12 @@ const JOURNEY: { phase: string; short?: string; title?: string; intro?: string; 
   },
   {
     phase: 'Currently learning',
+<<<<<<< HEAD
     short: 'Now',
     title: 'Where I am now',
     intro: 'This chapter is about depth. I am getting more comfortable with React, going deeper into Node.js and back-end services, and adding TypeScript to catch mistakes earlier. SafeRoute Hub, a disaster response PWA, is the project putting React to work right now.',
+=======
+>>>>>>> d084201ffed813a270732e0e51e30787e1cc62cd
     items: [
       {
         title: 'React.js',
@@ -1374,7 +1377,11 @@ export default function App() {
                       href={svc.example.url}
                       target="_blank"
                       rel="noopener noreferrer"
+<<<<<<< HEAD
                       className={`mt-4 inline-block text-sm underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-accent hover:text-accent transition-colors ${focusRing}`}
+=======
+                      className={`mt-4 inline-block text-sm underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-900 dark:hover:decoration-neutral-100 transition-colors ${focusRing}`}
+>>>>>>> d084201ffed813a270732e0e51e30787e1cc62cd
                     >
                       {svc.example.label} →
                     </a>
@@ -1405,6 +1412,7 @@ export default function App() {
                 {PRICING_NOTE && <p className="mt-12 text-neutral-500 dark:text-neutral-400">{PRICING_NOTE}</p>}
                 <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-neutral-200 dark:border-neutral-800 pt-8">
                   <p className="text-neutral-700 dark:text-neutral-300">Have a project in mind? Send me a message.</p>
+<<<<<<< HEAD
                   <Magnetic>
                     <a
                       href={`mailto:${EMAIL}`}
@@ -1414,6 +1422,14 @@ export default function App() {
                       Send me a message →
                     </a>
                   </Magnetic>
+=======
+                  <a
+                    href={`mailto:${EMAIL}`}
+                    className={`inline-block rounded-md bg-neutral-900 dark:bg-neutral-100 px-5 py-2.5 text-sm font-semibold text-white dark:text-neutral-900 hover:opacity-90 transition-opacity ${focusRing}`}
+                  >
+                    Send me a message →
+                  </a>
+>>>>>>> d084201ffed813a270732e0e51e30787e1cc62cd
                 </div>
               </>
             )}
