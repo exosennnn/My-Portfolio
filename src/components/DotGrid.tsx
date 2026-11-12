@@ -27,12 +27,27 @@ export default function DotGrid() {
       const rgb = dark ? '255,255,255' : '0,0,0';
       const baseAlpha = dark ? 0.1 : 0.14;
 
+      // Far dots all share one color and size, so they go into a single path and one fill call
+      ctx.fillStyle = `rgba(${rgb},${baseAlpha})`;
+      ctx.beginPath();
+      for (let gx = SPACING / 2; gx < width; gx += SPACING) {
+        for (let gy = SPACING / 2; gy < height; gy += SPACING) {
+          const dist = Math.hypot(gx - pointer.x, gy - pointer.y);
+          if (dist < INFLUENCE) continue;
+          ctx.moveTo(gx + 1, gy);
+          ctx.arc(gx, gy, 1, 0, Math.PI * 2);
+        }
+      }
+      ctx.fill();
+
+      // Only the dots near the cursor need their own size, position, and brightness
       for (let gx = SPACING / 2; gx < width; gx += SPACING) {
         for (let gy = SPACING / 2; gy < height; gy += SPACING) {
           const dx = gx - pointer.x;
           const dy = gy - pointer.y;
           const dist = Math.hypot(dx, dy);
-          const near = Math.max(0, 1 - dist / INFLUENCE);
+          if (dist >= INFLUENCE) continue;
+          const near = 1 - dist / INFLUENCE;
           const ease = near * near;
           const push = ease * PUSH;
           const x = dist ? gx + (dx / dist) * push : gx;

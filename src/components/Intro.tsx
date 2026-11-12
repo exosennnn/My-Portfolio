@@ -24,23 +24,24 @@ export default function Intro() {
       /* storage unavailable, the intro may show again */
     }
     setLeaving(true);
+    window.dispatchEvent(new Event('intro-done')); // lets the tour start right after the intro
   };
 
   // Type the name one letter at a time, then leave after a short pause
   useEffect(() => {
     if (!show || leaving) return;
     if (text.length < NAME.length) {
-      const t = window.setTimeout(() => setText(NAME.slice(0, text.length + 1)), 70);
+      const t = window.setTimeout(() => setText(NAME.slice(0, text.length + 1)), 40);
       return () => window.clearTimeout(t);
     }
-    const t = window.setTimeout(finish, 700);
+    const t = window.setTimeout(finish, 400);
     return () => window.clearTimeout(t);
   }, [show, leaving, text]);
 
   // Remove the overlay once the fade-out is done
   useEffect(() => {
     if (!leaving) return;
-    const t = window.setTimeout(() => setShow(false), 550);
+    const t = window.setTimeout(() => setShow(false), 380);
     return () => window.clearTimeout(t);
   }, [leaving]);
 

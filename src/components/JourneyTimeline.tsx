@@ -145,7 +145,7 @@ export default function JourneyTimeline({ groups, next }: { groups: JourneyGroup
                     <li
                       key={m.title}
                       data-idx={idx}
-                      className={`relative pl-6 transition-all duration-700 motion-reduce:transition-none motion-reduce:opacity-100 motion-reduce:translate-y-0 ${
+                      className={`relative pl-6 transition-[opacity,transform,width,background-color] duration-700 motion-reduce:transition-none motion-reduce:opacity-100 motion-reduce:translate-y-0 ${
                         revealed.has(idx) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
                       }`}
                     >

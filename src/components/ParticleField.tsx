@@ -16,7 +16,12 @@ export default function ParticleField({ count = 900 }: { count?: number }) {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const n = window.innerWidth < 640 ? Math.round(count / 2) : count; // fewer particles on phones
 
-    import('three')
+    // Load Three.js once the browser is idle, so the hero text and the rest of the page paint first
+    new Promise<void>((resolve) => {
+      if ('requestIdleCallback' in window) window.requestIdleCallback(() => resolve(), { timeout: 800 });
+      else window.setTimeout(resolve, 200);
+    })
+      .then(() => import('three'))
       .then((THREE) => {
         if (disposed) return;
 

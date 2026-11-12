@@ -111,7 +111,7 @@ export default function GithubStats({ user }: { user: string }) {
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
                   <div
-                    className="h-full rounded-full bg-neutral-900 dark:bg-neutral-100 transition-all duration-500 group-hover:bg-accent"
+                    className="h-full rounded-full bg-neutral-900 dark:bg-neutral-100 transition-[opacity,transform,width,background-color] duration-500 group-hover:bg-accent"
                     style={{ width: `${l.pct}%` }}
                   />
                 </div>

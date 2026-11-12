@@ -100,12 +100,10 @@ html.theme-fade * {
   from {
     opacity: 0;
     transform: translateY(14px);
-    filter: blur(4px);
   }
   to {
     opacity: 1;
     transform: none;
-    filter: none;
   }
 }
 
@@ -125,8 +123,9 @@ html.theme-fade * {
 .bg-blob {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(90px);
   opacity: 0.35;
+  will-change: transform;
+  contain: strict;
   animation: blob-drift 26s ease-in-out infinite alternate;
 }
 .dark .bg-blob {
@@ -137,14 +136,14 @@ html.theme-fade * {
   height: 460px;
   top: -140px;
   right: -100px;
-  background: #a3a3a3;
+  background: radial-gradient(circle, #a3a3a3 0%, rgba(163,163,163,0) 70%);
 }
 .blob-b {
   width: 380px;
   height: 380px;
   bottom: -160px;
   left: 25%;
-  background: #525252;
+  background: radial-gradient(circle, #525252 0%, rgba(82,82,82,0) 70%);
   animation-duration: 32s;
   animation-delay: -10s;
 }
@@ -330,4 +329,56 @@ html.dark[data-cursor-mode='label'] .cursor-ring {
     transform: scale(2.2);
     opacity: 0;
   }
+}
+
+/* Journey story: slides enter from the side they were reached from, and their beats arrive one by one */
+.journey-slide {
+  animation: journey-slide-in 620ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes journey-slide-in {
+  from { opacity: 0; transform: translateX(calc(var(--dir, 1) * 48px)); }
+  to   { opacity: 1; transform: none; }
+}
+.journey-beat {
+  animation: journey-beat-in 650ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 110ms + 180ms);
+}
+@keyframes journey-beat-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+.journey-now {
+  animation: journey-pulse 2s ease-out infinite;
+}
+@keyframes journey-pulse {
+  0%   { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-slide,
+  .journey-beat,
+  .journey-now { animation: none; }
+}
+
+/* Autoplay progress line and the blinking caret of the typed code */
+.journey-timer {
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation-name: journey-timer;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+@keyframes journey-timer {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+.journey-caret {
+  animation: journey-blink 1s steps(1) infinite;
+}
+@keyframes journey-blink {
+  50% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-timer,
+  .journey-caret { animation: none; }
 }

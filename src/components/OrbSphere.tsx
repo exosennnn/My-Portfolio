@@ -173,12 +173,31 @@ export default function OrbSphere({ size = 120, marker }: { size?: number; marke
     let geo: Geo | null = null; // set when the map arrives
     let cancelled = false;
 
-    loadMap().then((g) => {
-      if (!cancelled && g) {
-        geo = g;
-        if (reduce) draw();
-      }
-    });
+    // Fetch and decode the map only once the globe is near the screen, and off the critical path
+    let io: IntersectionObserver | null = null;
+    const startMap = () => {
+      io?.disconnect();
+      const run = () =>
+        loadMap().then((g) => {
+          if (!cancelled && g) {
+            geo = g;
+            if (reduce) draw();
+          }
+        });
+      if ('requestIdleCallback' in window) window.requestIdleCallback(run, { timeout: 1500 });
+      else window.setTimeout(run, 0);
+    };
+    if ('IntersectionObserver' in window) {
+      io = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) startMap();
+        },
+        { rootMargin: '300px' },
+      );
+      io.observe(canvas);
+    } else {
+      startMap();
+    }
 
     const draw = () => {
       const dark = document.documentElement.classList.contains('dark');
@@ -307,6 +326,7 @@ export default function OrbSphere({ size = 120, marker }: { size?: number; marke
 
     return () => {
       cancelled = true;
+      io?.disconnect();
       cancelAnimationFrame(raf);
       canvas.removeEventListener('pointerenter', onEnter);
       canvas.removeEventListener('pointerleave', onLeave);
