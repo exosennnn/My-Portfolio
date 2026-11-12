@@ -5,6 +5,7 @@ import {
   type ReactNode,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
+import { blip } from '../lib/sound';
 
 const W = 320;
 const H = 200;
@@ -168,9 +169,11 @@ function Game({ onClose }: { onClose: () => void }) {
       const kept: Dot[] = [];
       let delta = 0;
       let hits = 0;
+      let hitKind: Kind = 'normal';
       for (const d of s.dots) {
         if (Math.hypot(d.x - s.x, d.y - s.y) < reach) {
           delta += VALUE[d.kind];
+          hitKind = d.kind;
           hits++;
         } else {
           kept.push(d);
@@ -180,6 +183,9 @@ function Game({ onClose }: { onClose: () => void }) {
       if (hits) {
         s.score = Math.max(0, s.score + delta);
         setScore(s.score);
+        if (hitKind === 'gold') blip(1100, 0.1);
+        else if (hitKind === 'bad') blip(180, 0.12, 'square', 0.03);
+        else blip(660, 0.04);
       }
       s.dots = kept;
 
@@ -207,6 +213,7 @@ function Game({ onClose }: { onClose: () => void }) {
       ctx.fillRect(s.x - PLAYER / 2, s.y - PLAYER / 2, PLAYER, PLAYER);
 
       if (s.time <= 0) {
+        blip(330, 0.35, 'triangle');
         setPhase('done');
         return;
       }
@@ -288,7 +295,7 @@ function Game({ onClose }: { onClose: () => void }) {
           {phase !== 'playing' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
               {phase === 'done' && <p className="text-sm">score: {score}</p>}
-              <button onClick={start} className={btn}>
+              <button data-cursor={phase === 'done' ? 'again' : 'play'} onClick={start} className={btn}>
                 {phase === 'done' ? 'play again' : 'start'}
               </button>
             </div>

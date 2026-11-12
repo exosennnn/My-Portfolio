@@ -134,8 +134,25 @@ export default function Tour() {
         </div>
       </div>
 
+      <div className="mb-4 h-1 rounded-full bg-neutral-200 dark:bg-neutral-800" aria-hidden="true">
+        <div
+          className="h-1 rounded-full bg-neutral-900 dark:bg-neutral-100 transition-all duration-300"
+          style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
+        />
+      </div>
       <p className="font-bold">{current.title}</p>
       <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">{bodyText}</p>
+      {step === last && (
+        <button
+          onClick={() => {
+            close();
+            window.dispatchEvent(new Event('open-chat'));
+          }}
+          className={`mt-3 text-xs px-3 py-1.5 rounded border border-neutral-900 dark:border-neutral-100 text-neutral-900 dark:text-neutral-100 hover:bg-neutral-900 hover:text-white dark:hover:bg-neutral-100 dark:hover:text-neutral-900 transition-colors ${focusRing}`}
+        >
+          Want to talk? Open the chat →
+        </button>
+      )}
 
       {step === 0 && (
         <>

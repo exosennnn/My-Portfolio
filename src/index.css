@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Accent color (a cool blue). Only shows on hover and active states, so the page stays neutral.
+   Light and dark values are both set here; Tailwind's `accent` color reads this variable. */
+:root {
+  --accent: #2563eb;
+}
+.dark {
+  --accent: #60a5fa;
+}
+
 
 html {
   scroll-behavior: smooth;
@@ -112,15 +121,6 @@ html.theme-fade * {
 }
 
 /* Background: dot grid with a radial fade, plus two slow blurred blobs */
-.bg-dots {
-  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.14) 1px, transparent 1px);
-  background-size: 24px 24px;
-  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 85%);
-  mask-image: radial-gradient(ellipse at center, black 30%, transparent 85%);
-}
-.dark .bg-dots {
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-}
 
 .bg-blob {
   position: absolute;
@@ -156,4 +156,178 @@ html.theme-fade * {
 
 @media (prefers-reduced-motion: reduce) {
   .bg-blob { animation: none; }
+}
+
+/* Dot grid canvas (DotGrid.tsx): radial fade so the edges melt into the page */
+.dot-grid {
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 85%);
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 85%);
+}
+
+/* Headings: letters rise into place as they scroll in (SplitHeading.tsx) */
+@media (prefers-reduced-motion: no-preference) {
+  .split-char {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    padding-bottom: 0.15em;
+    margin-bottom: -0.15em;
+  }
+  .split-letter {
+    display: inline-block;
+    transform: translateY(110%);
+    transition: transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .split.is-in .split-letter {
+    transform: none;
+  }
+}
+
+/* Profile photo glides between pages (View Transitions API) */
+.vt-profile {
+  view-transition-name: profile-photo;
+}
+::view-transition-group(profile-photo) {
+  animation-duration: 650ms;
+  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Custom cursor (CustomCursor.tsx). Only active on pointer devices, see the html.custom-cursor class. */
+html.custom-cursor,
+html.custom-cursor * {
+  cursor: none !important;
+}
+html.custom-cursor input,
+html.custom-cursor textarea,
+html.custom-cursor select {
+  cursor: text !important;
+}
+html.custom-cursor select {
+  cursor: pointer !important;
+}
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 60;
+  pointer-events: none;
+  border-radius: 9999px;
+  will-change: transform;
+  transition: opacity 200ms ease-out;
+}
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: #171717;
+  transition: opacity 200ms ease-out, background-color 200ms ease-out;
+}
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1.5px solid #171717;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #171717;
+  transition: width 260ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    height 260ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    margin 260ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    background-color 200ms ease-out, border-color 200ms ease-out, color 200ms ease-out,
+    opacity 200ms ease-out;
+}
+
+/* Over a link or button: the ring grows and the dot steps aside */
+html[data-cursor-mode='link'] .cursor-ring {
+  width: 58px;
+  height: 58px;
+  margin: -29px 0 0 -29px;
+  background-color: rgba(23, 23, 23, 0.08);
+}
+html[data-cursor-mode='link'] .cursor-dot {
+  opacity: 0;
+}
+
+/* Over a link or button: the ring takes the accent color */
+html[data-cursor-mode='link'] .cursor-ring {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Over an element with data-cursor: a filled ring with a word inside */
+html[data-cursor-mode='label'] .cursor-ring {
+  width: 86px;
+  height: 86px;
+  margin: -43px 0 0 -43px;
+  background-color: #171717;
+  border-color: #171717;
+  color: #ffffff;
+}
+html[data-cursor-mode='label'] .cursor-dot {
+  opacity: 0;
+}
+.cursor-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Over a text field: the native cursor takes over, so hide ours */
+html[data-cursor-mode='text'] .cursor-dot,
+html[data-cursor-mode='text'] .cursor-ring {
+  opacity: 0;
+}
+
+/* Left the window */
+html[data-cursor-hidden] .cursor-dot,
+html[data-cursor-hidden] .cursor-ring {
+  opacity: 0;
+}
+
+/* Dark mode */
+.dark .cursor-dot {
+  background: #f5f5f5;
+}
+.dark .cursor-ring {
+  border-color: #f5f5f5;
+  color: #f5f5f5;
+}
+.dark html[data-cursor-mode='link'] .cursor-ring,
+html.dark[data-cursor-mode='link'] .cursor-ring {
+  background-color: rgba(245, 245, 245, 0.1);
+}
+html.dark[data-cursor-mode='label'] .cursor-ring {
+  background-color: #f5f5f5;
+  border-color: #f5f5f5;
+  color: #171717;
+}
+
+/* Click ripple (CustomCursor.tsx): a ring that expands and fades from the click point */
+.cursor-ripple {
+  position: fixed;
+  z-index: 59;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 1.5px solid #171717;
+  border-radius: 9999px;
+  pointer-events: none;
+  animation: cursor-ripple 600ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+.dark .cursor-ripple {
+  border-color: #f5f5f5;
+}
+@keyframes cursor-ripple {
+  from {
+    transform: scale(0.2);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(2.2);
+    opacity: 0;
+  }
 }

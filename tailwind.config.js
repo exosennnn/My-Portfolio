@@ -13,6 +13,9 @@ export default {
         sans: jetbrains,
         mono: jetbrains,
       },
+      colors: {
+        accent: 'var(--accent)',
+      },
     },
   },
   plugins: [],

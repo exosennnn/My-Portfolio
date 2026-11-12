@@ -4,7 +4,8 @@ const BUDGETS = ['Under ₱10,000', '₱10,000 – ₱30,000', '₱30,000 – �
 const DEADLINES = ['Within 2 weeks', 'About 1 month', '2–3 months', 'Flexible', 'Not sure yet'];
 const STEP_TITLES = ['Project type', 'Goal & audience', 'Budget & deadline', 'Your name & send'];
 
-type Props = { email: string; serviceTitles: string[] };
+type Service = { title: string; timeline: string; tags: string[] };
+type Props = { email: string; services: Service[] };
 
 const input =
   'w-full bg-transparent border border-neutral-300 dark:border-neutral-700 rounded px-3 py-2 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-400 dark:placeholder:text-neutral-600 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 dark:focus-visible:outline-neutral-100';
@@ -28,7 +29,8 @@ function Chip({ selected, onClick, children }: { selected: boolean; onClick: () 
   );
 }
 
-export default function QuoteBuilder({ email, serviceTitles }: Props) {
+export default function QuoteBuilder({ email, services }: Props) {
+  const serviceTitles = services.map((s) => s.title);
   const [step, setStep] = useState(0);
   const [service, setService] = useState(serviceTitles[0] ?? '');
   const [audience, setAudience] = useState('');
@@ -36,6 +38,7 @@ export default function QuoteBuilder({ email, serviceTitles }: Props) {
   const [deadline, setDeadline] = useState('');
   const [name, setName] = useState('');
   const [copied, setCopied] = useState(false);
+  const picked = services.find((s) => s.title === service);
 
   const subject = `Project inquiry: ${service}`;
   const body = [
@@ -44,6 +47,7 @@ export default function QuoteBuilder({ email, serviceTitles }: Props) {
     "I'd like to talk about a project.",
     '',
     `Type of project: ${service}`,
+    ...(picked ? [`Stack: ${picked.tags.join(', ')}`, `Typical timeline: ${picked.timeline}`] : []),
     `Who will use it: ${audience.trim() || 'Not specified'}`,
     `Budget: ${budget || 'Not sure yet'}`,
     `Deadline: ${deadline || 'Not sure yet'}`,
@@ -87,13 +91,23 @@ export default function QuoteBuilder({ email, serviceTitles }: Props) {
 
       <div className="max-w-lg min-h-[11rem]">
         {step === 0 && (
-          <div className="flex flex-wrap gap-2">
-            {serviceTitles.map((t) => (
-              <Chip key={t} selected={service === t} onClick={() => setService(t)}>
-                {t}
-              </Chip>
-            ))}
-          </div>
+          <>
+            <div className="flex flex-wrap gap-2">
+              {serviceTitles.map((t) => (
+                <Chip key={t} selected={service === t} onClick={() => setService(t)}>
+                  {t}
+                </Chip>
+              ))}
+            </div>
+            {picked && (
+              <div className="mt-4 space-y-1 text-xs text-neutral-500 dark:text-neutral-400">
+                <p>{picked.timeline}</p>
+                <p className="font-mono">
+                  {picked.tags.map((t) => `#${t.toLowerCase().replace(/\s+/g, '-')}`).join('  ')}
+                </p>
+              </div>
+            )}
+          </>
         )}
 
         {step === 1 && (

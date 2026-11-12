@@ -3,10 +3,27 @@ import Reveal from './components/Reveal';
 import Background from './components/Background';
 import Tour from './components/Tour';
 import MiniGame, { TapToPlay } from './components/MiniGame';
+import Terminal from './components/Terminal';
+import Konami from './components/Konami';
 import TwistPhoto from './components/TwistPhoto';
 import Typewriter from './components/Typewriter';
 import QuoteBuilder from './components/QuoteBuilder';
 import JourneyTimeline from './components/JourneyTimeline';
+import ScrambleText from './components/ScrambleText';
+import SplitHeading from './components/SplitHeading';
+import Counter from './components/Counter';
+import FloatingChips from './components/FloatingChips';
+import CustomCursor from './components/CustomCursor';
+import Magnetic from './components/Magnetic';
+import Intro from './components/Intro';
+import OrbSphere from './components/OrbSphere';
+import ParticleField from './components/ParticleField';
+import StackOrbit from './components/StackOrbit';
+import SoundToggle from './components/SoundToggle';
+import TypeTest from './components/TypeTest';
+import GithubStats from './components/GithubStats';
+import { blip } from './lib/sound';
+import { flushSync } from 'react-dom';
 
 const EMAIL = 'almojuelajaymark0@gmail.com'; // TODO: put your real email here
 
@@ -22,11 +39,12 @@ const LINKS = {
 
 // Fill these in. Empty values hide their block on the site.
 const AVAILABILITY = 'Open to freelance';
-const STATUS = '3rd-year BSIT student at NCST';
+const STATUS = 'Third-year BS IT student at NCST';
 const BASED_IN = 'Based in Philippines'; // change to a city if you prefer
 const LOOKING_FOR = 'Freelance projects with clients';
 const RESPONSE_TIME = 'Usually replies within 24 hours';
-const LAST_UPDATED = 'October 2026'; // update this by hand when you change the site
+const ABOUT_TEXT = 'Third-year BS IT student and aspiring web developer, building functional, user-focused apps.';
+const LAST_UPDATED = 'November 2026'; // update this by hand when you change the site
 const CURRENTLY_BUILDING = {
   title: 'SafeRoute Hub',
   note: 'A PWA for disaster management and emergency response coordination.',
@@ -79,7 +97,7 @@ const PROJECTS: Project[] = [
     title: 'Rock, Paper and Scissors Game',
     language: 'C++',
     description:
-      'A console-based implementation of the classic Rock-Paper-Scissors game developed in C++. This project serves as an interactive application demonstrating core programming logic, modular design, and user input handling in C++..',
+      'A console-based implementation of the classic Rock-Paper-Scissors game developed in C++. This project serves as an interactive application demonstrating core programming logic, modular design, and user input handling in C++.',
     tags: ['C++', 'Console app'],
     url: 'https://github.com/exosennnn/Rock-Paper-Scissors-Game',
   },
@@ -101,32 +119,43 @@ const PROJECTS: Project[] = [
   },
 ];
 
-// Leave empty to hide the pricing line on the Services page
-const PRICING_NOTE = '';
+// Shown under the services list on the Services page. Leave empty to hide it
+const PRICING_NOTE = 'Pricing depends on scope. Send me your requirements and I will send you a quote.';
 
-const SERVICES = [
+// timeline is a typical estimate; example is optional (add { label, url } to show a "see example" link)
+const SERVICES: {
+  title: string;
+  description: string;
+  timeline: string;
+  tags: string[];
+  example?: { label: string; url: string };
+}[] = [
   {
     title: 'Landing pages & business sites',
     description:
-      'Responsive one-page or multi-page sites for small businesses, events, and personal portfolios, built to load fast on phones.',
+      'Fast-loading, mobile-friendly sites for small businesses, events, and personal portfolios. Clear layouts that help visitors find what they need and get in touch.',
+    timeline: 'Typical timeline: 1 to 2 weeks',
     tags: ['Vue.js', 'React', 'Tailwind CSS'],
   },
   {
     title: 'Web apps & dashboards',
     description:
-      'Custom web apps such as booking and reservation systems, admin dashboards, and internal tools for tracking records.',
+      'Booking and reservation systems, admin dashboards, and internal tools that replace spreadsheets and manual tracking, with an interface your staff can use right away.',
+    timeline: 'Typical timeline: 3 to 6 weeks',
     tags: ['Vue.js', 'React', 'Laravel', 'MySQL'],
   },
   {
     title: 'Database-backed systems',
     description:
-      'Database design and the back-end logic behind it, for things like queues, inventory, and record keeping.',
+      'Organized database design and back-end logic for queues, inventory, and record keeping, so your data stays accurate and easy to retrieve.',
+    timeline: 'Typical timeline: 2 to 4 weeks',
     tags: ['MySQL', 'PostgreSQL', 'Supabase', 'PHP'],
   },
   {
     title: 'Fixes & improvements',
     description:
-      'Fixing bugs, adding features, or cleaning up an existing project built with the tools listed here.',
+      'Fixing bugs, adding features, or cleaning up an existing project so it runs reliably and is easier to maintain.',
+    timeline: 'Timeline depends on the size of the change',
     tags: ['JavaScript', 'Vue.js', 'React', 'PHP'],
   },
 ];
@@ -167,7 +196,7 @@ const BLOG_POSTS: { title: string; date: string; excerpt: string; url?: string; 
       "React support comes from @vitejs/plugin-react, which is listed as a plugin in vite.config.js. The whole config is a few lines: import the plugin, then call it inside defineConfig. There is no extra setup for JSX, because the plugin handles it.",
       "The entry point is main.jsx. It creates the root with createRoot and renders App inside StrictMode. StrictMode runs some extra checks during development only, so it does not change how the production build behaves.",
       "Because the output is static files, the site can be deployed to Vercel without a server. The one thing that needs configuring is routing, which is covered in the post about refresh-safe routes.",
-      "My tip is to keep the number of dependencies small. This project has four runtime packages. Every extra package is one more thing to update and one more possible point of failure, so add a package only when you actually need it.",
+      "My tip is to keep the number of dependencies small. This project has five runtime packages. Every extra package is one more thing to update and one more possible point of failure, so add a package only when you actually need it.",
     ],
   },
   {
@@ -198,8 +227,11 @@ const BLOG_POSTS: { title: string; date: string; excerpt: string; url?: string; 
   },
 ];
 
+// Rough reading time, about 200 words per minute
+const readTime = (paras: string[]) => Math.max(1, Math.round(paras.join(' ').split(/\s+/).length / 200));
+
 // TODO: update these to what you are working on right now
-const NOW_UPDATED = 'October 2026';
+const NOW_UPDATED = 'November 2026';
 const NOW_ITEMS = [
   'Building SafeRoute Hub, a PWA for disaster response.',
   'Getting deeper into React and Tailwind.',
@@ -208,22 +240,31 @@ const NOW_ITEMS = [
 const HERO_ROLES = ['Web Developer', 'Vue & React builder', 'IT student'];
 
 const STACK = [
-  { label: 'Languages', items: ['Python', 'JavaScript', 'C++', 'HTML', 'CSS', 'PHP', 'Java', 'CSharp'] },
-  { label: 'Frameworks', items: ['Vue.js', 'React', 'Tailwind CSS', 'Vite', 'BootStrap5', 'Laravel', 'Node.js', 'TypeScript'] },
+  { label: 'Languages', items: ['Python', 'JavaScript', 'C++', 'HTML', 'CSS', 'PHP', 'Java', 'C#'] },
+  { label: 'Frameworks', items: ['Vue.js', 'React', 'Tailwind CSS', 'Vite', 'Bootstrap 5', 'Laravel', 'Node.js', 'TypeScript'] },
   { label: 'Databases', items: ['MySQL', 'PostgreSQL', 'Supabase'] },
-  { label: 'Tools', items: ['Git', 'GitHub', 'VS Code', 'npm', 'figma', 'XAMPP'] },
+  { label: 'Tools', items: ['Git', 'GitHub', 'VS Code', 'npm', 'Figma', 'XAMPP'] },
 ];
+
+const TECH_COUNT = new Set(STACK.flatMap((g) => g.items)).size;
+// Pin on the contact globe. Approximate center of the Philippines.
+const HOME_MARKER = { lat: 12.88, lon: 121.77 };
+// Words for the typing test: the tech stack, so the test is made of tools I actually use
+const TECH_WORDS = Array.from(new Set(STACK.flatMap((g) => g.items)));
 
 type Milestone = {
   title: string;
   description: string;
   sem?: string;
-  current?: boolean;
+  current?: boolean;  status?: 'done' | 'now' | 'next';
 };
 
-const JOURNEY: { phase: string; items: Milestone[] }[] = [
+const JOURNEY: { phase: string; short?: string; title?: string; intro?: string; items: Milestone[] }[] = [
   {
     phase: 'Year 1',
+    short: 'Y1',
+    title: 'The first lines of code',
+    intro: 'It started in the first semester with C++, learning to think in steps and write programs that actually run. The second semester brought the web: my first HTML pages, and the first attempts at making them look good with CSS.',
     items: [
       {
         title: 'C++ Programming',
@@ -239,6 +280,9 @@ const JOURNEY: { phase: string; items: Milestone[] }[] = [
   },
   {
     phase: 'Year 2',
+    short: 'Y2',
+    title: 'Building the foundations',
+    intro: 'Year two was where things started to connect. I wrote server-side code in PHP, built responsive layouts with Bootstrap, and designed MySQL databases. Data structures taught me to think about efficiency, and Java and Python brought object-oriented thinking.',
     items: [
       {
         title: 'PHP, Bootstrap & JavaScript',
@@ -264,50 +308,101 @@ const JOURNEY: { phase: string; items: Milestone[] }[] = [
   },
   {
     phase: 'Year 3',
+    short: 'Y3',
+    title: 'Beyond the classroom',
+    intro: 'In third year the work moved toward bigger systems and modern front-end tools. Vue.js and Tailwind CSS came in, along with Node.js, which made me think about how the front and back of an app fit together.',
     items: [
       {
         title: 'System Integration',
         description: 'Learning how separate systems and components are connected so they work together as one.',
         current: true,
+        status: 'done',
       },
       {
         title: 'Vue.js & Tailwind CSS',
         description: 'Building modern front-end interfaces with a component framework and utility-first styling.',
         current: true,
+        status: 'done',
       },
       {
         title: 'NodeJS',
         description: 'Learning to build server-side applications with Node.js and JavaScript.',
         current: true,
+        status: 'done',
       },
     ],
   },
   {
     phase: 'Self-study',
+    short: 'Self',
+    title: 'Learning on my own',
+    intro: 'Over the break I went past what the curriculum covered. I picked up Laravel for back-end work, React for component-based interfaces, PostgreSQL beyond MySQL, and C# for building applications.',
     items: [
       {
         title: 'Laravel',
         description: 'Building back-end applications with the Laravel PHP framework.',
         sem: 'Vacation',
+        status: 'done',
       },
       {
         title: 'React',
         description: 'Building component-based user interfaces with React and JavaScript.',
         sem: 'Vacation',
+        status: 'done',
       },
       {
         title: 'PostgreSQL',
         description: 'Working with PostgreSQL, a relational database system, beyond MySQL.',
         sem: 'Vacation',
+        status: 'done',
       },
       {
         title: 'C#',
         description: 'Learning the C# language and its use for building applications.',
         sem: 'Vacation',
+        status: 'done',
+      },
+    ],
+  },
+  {
+    phase: 'Currently learning',
+    short: 'Now',
+    title: 'Where I am now',
+    intro: 'This chapter is about depth. I am getting more comfortable with React, going deeper into Node.js and back-end services, and adding TypeScript to catch mistakes earlier. SafeRoute Hub, a disaster response PWA, is the project putting React to work right now.',
+    items: [
+      {
+        title: 'React.js',
+        description: 'Deepening my understanding of React, from component patterns and state management to performance.',
+        current: true,
+        status: 'now',
+      },
+      {
+        title: 'Node.js',
+        description: 'Going deeper into server-side JavaScript, including APIs, modules, and building back-end services.',
+        current: true,
+        status: 'now',
+      },
+      {
+        title: 'TypeScript',
+        description: 'Adding static typing to JavaScript projects to catch errors early and write more maintainable code.',
+        current: true,
+        status: 'now',
       },
     ],
   },
 ];
+
+// Closing section of the journey. Edit these goals to match what you are actually working toward.
+const JOURNEY_NEXT = {
+  title: 'What comes next',
+  intro:
+    'The story is still being written. The next chapters are about shipping things people can actually use, and getting paid to build them.',
+  goals: [
+    'Finish and deploy SafeRoute Hub, with a live demo link.',
+    'Take on my first freelance client project.',
+    'Add a live link to every project on the Projects page.',
+  ],
+};
 
 const FILTERS = ['All', 'Python', 'JavaScript', 'C++'];
 
@@ -352,14 +447,15 @@ const NAV = [
 ];
 
 // Sidebar groups: Home on its own, then the work pages, then everything else
-const NAV_GROUPS = [NAV.slice(0, 1), NAV.slice(1, 4), NAV.slice(4)];
+const NAV_SECTIONS = [
+  { label: 'home', items: NAV.slice(0, 1) },
+  { label: 'work', items: NAV.slice(1, 4) },
+  { label: 'about', items: NAV.slice(4) },
+];
 
 const GITHUB_USER = 'exosennnn';
 
 type ContributionDay = { date: string; count: number; level: number };
-
-// Dot size as a percentage of its cell, for contribution levels 0-4
-const DOT_SIZE = [20, 40, 60, 80, 100];
 
 function GithubSection() {
   const [days, setDays] = useState<ContributionDay[] | null>(null);
@@ -394,60 +490,64 @@ function GithubSection() {
   const cells: (ContributionDay | null)[] = [...Array(lead).fill(null), ...days];
   const cols = Math.ceil(cells.length / 7);
 
+  // Squares, not dots, so they don't read as the background dot grid.
+  // Empty days get a faint fill; active days go from light to solid with the count.
+  const LEVEL_OPACITY = [1, 0.25, 0.45, 0.7, 1];
+  const cellClass = (level: number) =>
+    level === 0 ? 'bg-neutral-100 dark:bg-neutral-900' : 'bg-neutral-900 dark:bg-neutral-100';
+
   return (
     <Reveal as="section" id="github" className="py-20">
       <div className="flex items-baseline justify-between mb-8">
-        <h2 className="text-xl font-bold tracking-tight">
-          <span className="text-neutral-400 dark:text-neutral-500 font-normal">06 —</span> github
-        </h2>
+        <SplitHeading num="06 —">github</SplitHeading>
         <ExtLink href={`https://github.com/${GITHUB_USER}`}>@{GITHUB_USER} ↗</ExtLink>
       </div>
-    <div
-      className="grid gap-[4px]"
-      style={{
-        gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-        gridTemplateRows: 'repeat(7, auto)',
-        gridAutoFlow: 'column',
-      }}
-    >
-      {cells.map((d, i) => {
-        const level = d ? d.level : 0;
-        return (
-          <div key={i} className="aspect-square flex items-center justify-center">
-            <span
-              title={d ? `${d.count} on ${d.date}` : undefined}
-              style={{ width: `${DOT_SIZE[level]}%`, aspectRatio: '1 / 1' }}
-              className={`rounded-full ${
-                level === 0
-                  ? 'bg-neutral-200 dark:bg-neutral-800'
-                  : 'bg-neutral-900 dark:bg-neutral-100'
-              }`}
-            />
+
+      {/* Own panel: the background dots stop behind it, so the graph reads as one thing */}
+      <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 p-5 sm:p-6">
+        <div
+          className="grid gap-[3px]"
+          style={{
+            gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+            gridTemplateRows: 'repeat(7, auto)',
+            gridAutoFlow: 'column',
+          }}
+        >
+          {cells.map((d, i) => {
+            const level = d ? d.level : 0;
+            return (
+              <div key={i} className="aspect-square">
+                <span
+                  title={d ? `${d.count} on ${d.date}` : undefined}
+                  style={{ opacity: LEVEL_OPACITY[level] }}
+                  className={`block h-full w-full rounded-[3px] ${cellClass(level)}`}
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 text-xs text-neutral-400 dark:text-neutral-500">
+          {total !== null ? (
+            <p className="uppercase">{total.toLocaleString()} contributions in the last year</p>
+          ) : (
+            <span />
+          )}
+          <div className="flex items-center gap-1.5" aria-hidden="true">
+            <span className="mr-1">less</span>
+            {LEVEL_OPACITY.map((opacity, level) => (
+              <span
+                key={level}
+                style={{ opacity }}
+                className={`inline-block h-2.5 w-2.5 rounded-[2px] ${cellClass(level)}`}
+              />
+            ))}
+            <span className="ml-1">more</span>
           </div>
-        );
-      })}
-    </div>
-    <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 text-xs text-neutral-400 dark:text-neutral-500">
-      {total !== null ? (
-        <p className="uppercase">{total.toLocaleString()} contributions in the last year</p>
-      ) : (
-        <span />
-      )}
-      <div className="flex items-center gap-2" aria-hidden="true">
-        <span>less</span>
-        {DOT_SIZE.map((size, level) => (
-          <span key={level} className="inline-flex h-2.5 w-2.5 items-center justify-center">
-            <span
-              style={{ width: `${size / 10}px`, height: `${size / 10}px` }}
-              className={`rounded-full ${
-                level === 0 ? 'bg-neutral-200 dark:bg-neutral-800' : 'bg-neutral-900 dark:bg-neutral-100'
-              }`}
-            />
-          </span>
-        ))}
-        <span>more</span>
+        </div>
       </div>
-    </div>
+
+      <GithubStats user={GITHUB_USER} />
     </Reveal>
   );
 }
@@ -458,16 +558,79 @@ function ExtLink({ href, children }: { href: string; children: ReactNode }) {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-900 dark:hover:decoration-neutral-100 transition-colors rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-neutral-900 dark:focus-visible:outline-neutral-100"
+      className="underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-accent hover:text-accent transition-colors rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-neutral-900 dark:focus-visible:outline-neutral-100"
     >
       {children}
     </a>
   );
 }
 
-type IconName = 'mail' | 'github' | 'linkedin' | 'instagram';
+type IconName =
+  | 'mail'
+  | 'github'
+  | 'linkedin'
+  | 'instagram'
+  | 'home'
+  | 'stack'
+  | 'projects'
+  | 'services'
+  | 'journey'
+  | 'blog'
+  | 'chat'
+  | 'typing';
+
+const NAV_ICON: Record<string, IconName> = {
+  home: 'home',
+  stack: 'stack',
+  projects: 'projects',
+  services: 'services',
+  journey: 'journey',
+  blog: 'blog',
+  contact: 'mail',
+};
 
 const ICON_PATHS: Record<IconName, ReactNode> = {
+  home: (
+    <>
+      <path d="M3 10.5 12 3l9 7.5V21H3z" />
+      <path d="M9 21v-6h6v6" />
+    </>
+  ),
+  stack: (
+    <>
+      <path d="M12 3 2 8l10 5 10-5z" />
+      <path d="m2 13 10 5 10-5" />
+    </>
+  ),
+  projects: <path d="M3 7h6l2 2h10v10H3z" />,
+  services: (
+    <>
+      <rect width="18" height="13" x="3" y="7" rx="2" />
+      <path d="M9 7V5h6v2" />
+    </>
+  ),
+  journey: (
+    <>
+      <circle cx="6" cy="19" r="2" />
+      <circle cx="18" cy="5" r="2" />
+      <path d="M8 19h7a3.5 3.5 0 0 0 0-7h-4a3.5 3.5 0 0 1 0-7h5" />
+    </>
+  ),
+  blog: (
+    <>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
+    </>
+  ),
+  chat: (
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+  ),
+  typing: (
+    <>
+      <rect width="20" height="12" x="2" y="6" rx="2" />
+      <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10" />
+    </>
+  ),
   mail: (
     <>
       <rect width="20" height="16" x="2" y="4" rx="2" />
@@ -495,6 +658,14 @@ const ICON_PATHS: Record<IconName, ReactNode> = {
     </>
   ),
 };
+
+function Kbd({ children }: { children: ReactNode }) {
+  return (
+    <kbd className="rounded border border-neutral-300 dark:border-neutral-700 px-1 py-px font-mono text-[10px] leading-none text-neutral-500 dark:text-neutral-400">
+      {children}
+    </kbd>
+  );
+}
 
 function Icon({ name }: { name: IconName }) {
   return (
@@ -566,13 +737,16 @@ function ContactForm() {
       <input id="cf-email" name="email" type="email" required placeholder="email" className={field} />
       <label className="sr-only" htmlFor="cf-message">Message</label>
       <textarea id="cf-message" name="message" required rows={5} placeholder="what do you want to build?" className={field} />
+      <Magnetic>
       <button
         type="submit"
+        data-cursor="send"
         disabled={status === 'sending'}
         className="border border-neutral-900 dark:border-neutral-100 text-neutral-900 dark:text-neutral-100 px-3 py-1.5 rounded hover:bg-neutral-900 hover:text-white dark:hover:bg-neutral-100 dark:hover:text-neutral-900 transition-colors disabled:opacity-50"
       >
         {status === 'sending' ? 'sending…' : 'send message'}
       </button>
+      </Magnetic>
       <p role="status" aria-live="polite" className="text-xs text-neutral-500 dark:text-neutral-400">
         {status === 'sent' && 'Thanks! Your message was sent. I will reply soon.'}
         {status === 'error' && `Something went wrong. You can email me directly at ${EMAIL}.`}
@@ -602,9 +776,18 @@ export default function App() {
 
   const navigate = (to: string) => (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+    blip(520, 0.05);
     const [pathOnly, hash] = to.split('#');
-    window.history.pushState({}, '', to);
-    setPath(normalizePath(pathOnly));
+    const nextPath = normalizePath(pathOnly);
+    const change = () => {
+      window.history.pushState({}, '', to);
+      flushSync(() => setPath(nextPath));
+    };
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
+    // Between pages, the profile photo glides to its new spot when the browser supports it
+    if (nextPath !== path && doc.startViewTransition && !reduce) doc.startViewTransition(change);
+    else change();
     setMenuOpen(false);
     if (hash) {
       setTimeout(() => document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' }), 0);
@@ -643,6 +826,28 @@ export default function App() {
   }, [menuMounted, menuOpen]);
 
   const [chatOpen, setChatOpen] = useState(false);
+
+  // The tour's last step can open the chat
+  useEffect(() => {
+    const onOpenChat = () => setChatOpen(true);
+    window.addEventListener('open-chat', onOpenChat);
+    return () => window.removeEventListener('open-chat', onOpenChat);
+  }, []);
+  // Keyboard shortcuts shown in the sidebar: Alt+K chat, Alt+J typing test
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!e.altKey || e.ctrlKey || e.metaKey) return;
+      if (e.code === 'KeyK') {
+        e.preventDefault();
+        setChatOpen((v) => !v);
+      } else if (e.code === 'KeyJ') {
+        e.preventDefault();
+        window.dispatchEvent(new Event('open-typetest'));
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
   const [chatMounted, setChatMounted] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [chatMessages, setChatMessages] = useState<{ from: 'bot' | 'user'; text: string }[]>([
@@ -741,41 +946,93 @@ export default function App() {
 
   return (
     <div className="isolate min-h-screen text-neutral-900 dark:text-neutral-100 font-mono text-sm leading-relaxed selection:bg-neutral-900 selection:text-white dark:selection:bg-neutral-100 dark:selection:text-neutral-900">
+      <Intro />
       <Background />
+      <CustomCursor />
 
       {/* Desktop sidebar */}
-      <aside className="hidden sm:flex fixed inset-y-0 left-0 w-56 flex-col justify-between border-r border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 px-8 py-10 z-10">
-        <div>
+      <aside className="hidden sm:flex fixed inset-y-0 left-0 w-56 flex-col border-r border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 z-10">
+        <div className="flex-1 min-h-0 overflow-y-auto px-8 pt-10 pb-6">
           <a href="/" onClick={navigate('/')} className={`font-bold ${focusRing}`}>Jay Mark.</a>
-          <nav aria-label="Main" className="mt-10 flex flex-col gap-5">
-            {NAV_GROUPS.map((group, gi) => (
-              <div
-                key={gi}
-                className={`flex flex-col gap-3 text-neutral-500 dark:text-neutral-400 ${
-                  gi > 0 ? 'pt-5 border-t border-neutral-200 dark:border-neutral-800' : ''
-                }`}
-              >
-                {group.map((n) => (
-                  <a
-                    key={n.id}
-                    href={n.to}
-                    onClick={navigate(n.to)}
-                    aria-current={path === n.to ? 'true' : undefined}
-                    className={`transition-colors hover:text-neutral-900 dark:hover:text-neutral-100 ${focusRing} ${
-                      path === n.to ? 'text-neutral-900 dark:text-neutral-100 font-bold' : ''
-                    }`}
-                  >
-                    {path === n.to ? '› ' : ''}{n.label}
-                  </a>
-                ))}
+          {AVAILABILITY && (
+            <p className="mt-2 inline-flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
+              <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full bg-neutral-900 dark:bg-neutral-100" />
+              {AVAILABILITY}
+            </p>
+          )}
+
+          <nav aria-label="Main" className="mt-6 flex flex-col gap-5">
+            {NAV_SECTIONS.map((sec) => (
+              <div key={sec.label}>
+                <p className="mb-2 text-[10px] uppercase tracking-widest text-neutral-400 dark:text-neutral-500">// {sec.label}</p>
+                <div className="flex flex-col gap-2.5">
+                  {sec.items.map((n) => (
+                    <a
+                      key={n.id}
+                      href={n.to}
+                      onClick={navigate(n.to)}
+                      aria-current={path === n.to ? 'true' : undefined}
+                      className={`relative flex items-center gap-2.5 transition-colors hover:text-accent ${focusRing} ${
+                        path === n.to ? 'text-accent font-bold' : 'text-neutral-500 dark:text-neutral-400'
+                      }`}
+                    >
+                      {path === n.to && (
+                        <span aria-hidden="true" className="absolute -left-4 top-0">›</span>
+                      )}
+                      <Icon name={NAV_ICON[n.id]} />
+                      <ScrambleText text={n.label} />
+                    </a>
+                  ))}
+                </div>
               </div>
             ))}
           </nav>
+
+          {/* Shortcuts: same actions as the floating chat button and the footer typing test */}
+          <div className="mt-6 flex flex-col gap-2.5 text-xs text-neutral-500 dark:text-neutral-400">
+            <button
+              type="button"
+              onClick={() => setChatOpen((v) => !v)}
+              className={`flex items-center justify-between transition-colors hover:text-accent ${focusRing}`}
+            >
+              <span className="inline-flex items-center gap-2.5 whitespace-nowrap"><Icon name="chat" />chat with me</span>
+              <span className="inline-flex items-center gap-1"><Kbd>Alt</Kbd>+<Kbd>K</Kbd></span>
+            </button>
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event('open-typetest'))}
+              className={`flex items-center justify-between transition-colors hover:text-accent ${focusRing}`}
+            >
+              <span className="inline-flex items-center gap-2.5 whitespace-nowrap"><Icon name="typing" />typing test</span>
+              <span className="inline-flex items-center gap-1"><Kbd>Alt</Kbd>+<Kbd>J</Kbd></span>
+            </button>
+          </div>
+
+          {CURRENTLY_BUILDING.title && (
+            <div className="mt-6 rounded border border-neutral-200 dark:border-neutral-800 p-3">
+              <p className="text-[10px] uppercase tracking-widest text-neutral-400 dark:text-neutral-500">building</p>
+              {CURRENTLY_BUILDING.url ? (
+                <a href={CURRENTLY_BUILDING.url} target="_blank" rel="noreferrer" className={`mt-1 block font-bold leading-snug hover:text-accent transition-colors ${focusRing}`}>
+                  {CURRENTLY_BUILDING.title} ↗
+                </a>
+              ) : (
+                <p className="mt-1 font-bold">{CURRENTLY_BUILDING.title}</p>
+              )}
+              {CURRENTLY_BUILDING.note && <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{CURRENTLY_BUILDING.note}</p>}
+            </div>
+          )}
         </div>
 
-        <div className="flex flex-col gap-4">
+        {/* Pinned footer: contact, socials, theme, resume */}
+        <div className="border-t border-neutral-200 dark:border-neutral-800 px-8 py-6 flex flex-col gap-4">
+          <div className="text-xs text-neutral-500 dark:text-neutral-400">
+            <p>For work and collabs, reach me by email.</p>
+            <a href={`mailto:${EMAIL}`} className={`mt-1 inline-flex items-center gap-2 text-neutral-900 dark:text-neutral-100 underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-accent hover:text-accent ${focusRing}`}>
+              <Icon name="mail" />Send an email
+            </a>
+          </div>
           {/* Social icons and theme toggle share one row */}
-          <div className="flex items-center gap-4 text-neutral-500 dark:text-neutral-400">
+          <div className="flex items-center gap-3 text-neutral-500 dark:text-neutral-400">
             <a href={LINKS.github} target="_blank" rel="noreferrer" aria-label="GitHub" title="GitHub" className={`hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}>
               <Icon name="github" />
             </a>
@@ -805,10 +1062,11 @@ export default function App() {
                 </svg>
               )}
             </button>
+            <SoundToggle className={`hover:text-accent transition-colors ${focusRing}`} />
           </div>
 
           {LINKS.resume && (
-            <a href={LINKS.resume} target="_blank" rel="noreferrer" className={`text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}>resume ↗</a>
+            <a href={LINKS.resume} data-cursor="download" target="_blank" rel="noreferrer" className={`text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}>resume ↗</a>
           )}
           <p className="text-xs text-neutral-400 dark:text-neutral-500"><TapToPlay>updated {LAST_UPDATED}</TapToPlay></p>
         </div>
@@ -822,6 +1080,7 @@ export default function App() {
 
           {/* Mobile: theme toggle + hamburger */}
           <div className="flex items-center gap-4 sm:hidden">
+            <SoundToggle className={`text-neutral-500 dark:text-neutral-400 hover:text-accent transition-colors ${focusRing}`} />
             <button
               onClick={toggleTheme}
               aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -881,13 +1140,13 @@ export default function App() {
                   href={n.to}
                   onClick={navigate(n.to)}
                   aria-current={path === n.to ? 'true' : undefined}
-                  className={`px-4 py-2 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100 ${focusRing} ${
+                  className={`px-4 py-2 transition-colors hover:text-accent ${focusRing} ${
                     path === n.to
-                      ? 'text-neutral-900 dark:text-neutral-100 font-bold'
+                      ? 'text-accent font-bold'
                       : 'text-neutral-500 dark:text-neutral-400'
                   }`}
                 >
-                  {n.label}
+                  <ScrambleText text={n.label} />
                 </a>
               ))}
             </nav>
@@ -897,10 +1156,12 @@ export default function App() {
 
         {/* Hero */}
         {onHome && (
-        <section id="top" className="pt-12 pb-20">
+        <section id="top" className="pt-12 pb-20 relative">
+          <FloatingChips />
+          <ParticleField />
           <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-8 sm:gap-10">
             {/* Photo: halftone portrait at /public/profile.png (white bg blends into the page) */}
-            <div className="fx-rise shrink-0 w-44 sm:w-52 aspect-[4/5] bg-white rounded border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+            <div data-cursor="hi!" className="vt-profile fx-rise shrink-0 w-44 sm:w-52 aspect-[4/5] bg-white rounded border border-neutral-200 dark:border-neutral-800 overflow-hidden">
               {photoOk ? (
                 <TwistPhoto onError={() => setPhotoOk(false)} />
               ) : (
@@ -932,6 +1193,11 @@ export default function App() {
                         {STATUS && <p>{STATUS}</p>}
             {BASED_IN && <p>{BASED_IN}</p>}
           </div>
+              <div className="mt-6 flex justify-center gap-8 sm:justify-start">
+                <Counter to={PROJECTS.length} label="projects" />
+                <Counter to={TECH_COUNT} label="technologies" />
+                <Counter to={BLOG_POSTS.length} label="notes" />
+              </div>
 
             </div>
           </div>
@@ -941,14 +1207,13 @@ export default function App() {
         {/* About */}
         {onHome && (
         <Reveal as="section" id="about" className="py-20">
-          <h2 className="text-xl font-bold tracking-tight mb-8"><span className="text-neutral-400 dark:text-neutral-500 font-normal">01 —</span> about</h2>
+          <SplitHeading num="01 —" className="mb-8">about</SplitHeading>
           <div className="space-y-4 text-neutral-600 dark:text-neutral-400">
             <p>
-              I'm a Third-year BS Information Technology student at the National College of Science and Technology (NCST).
-              and an aspiring Web Developer. I like turning ideas into functional software, from a cinema booking system to task and reservation apps.
+              I'm a Third-year BS Information Technology student at the National College of Science and Technology (NCST) and an aspiring Web Developer. I like turning ideas into functional software, from a cinema booking system to task and reservation apps.
             </p>
             <p>
-              Right now, I'm getting deeper into React and Tailwind (this site is built with them) and while exploring new technologies and building real-world projects. 
+              Right now, I'm deepening my skills in React and Tailwind (this site is built with both) while exploring new technologies and building real-world projects.
               I'm looking for opportunities to collaborate with others, gain practical experience, and continue growing as a developer.
             </p>
           </div>
@@ -957,7 +1222,7 @@ export default function App() {
             <p className="mt-8 text-xs text-neutral-500 dark:text-neutral-400">
               building{' '}
               {CURRENTLY_BUILDING.url ? (
-                <a href={CURRENTLY_BUILDING.url} target="_blank" rel="noreferrer" className={`font-bold hover:underline underline-offset-4 ${focusRing}`}>
+                <a href={CURRENTLY_BUILDING.url} target="_blank" rel="noreferrer" className={`font-bold hover:underline hover:text-accent underline-offset-4 ${focusRing}`}>
                   {CURRENTLY_BUILDING.title} ↗
                 </a>
               ) : (
@@ -972,11 +1237,10 @@ export default function App() {
         {(onHome || path === '/stack') && (
           <Reveal as="section" id="stack" className="py-20">
             <div className="flex items-baseline justify-between mb-8">
-              <h2 className="text-xl font-bold tracking-tight">
-                {onHome && <span className="text-neutral-400 dark:text-neutral-500 font-normal">02 — </span>}stack
-              </h2>
-              {onHome && <a href="/stack" onClick={navigate('/stack')} className={`underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-900 dark:hover:decoration-neutral-100 transition-colors ${focusRing}`}>all →</a>}
+              <SplitHeading num={onHome ? '02 —' : undefined}>stack</SplitHeading>
+              {onHome && <a href="/stack" onClick={navigate('/stack')} className={`underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-accent hover:text-accent transition-colors ${focusRing}`}>all →</a>}
             </div>
+            {!onHome && <StackOrbit items={TECH_WORDS} />}
             {onHome ? (
               <div className="flex flex-wrap gap-2">
                 {STACK.flatMap((g) => g.items)
@@ -1022,11 +1286,9 @@ export default function App() {
         {(onHome || path === '/projects') && (
           <Reveal as="section" id="projects" className="py-20">
             <div className="flex items-baseline justify-between mb-8">
-              <h2 className="text-xl font-bold tracking-tight">
-                {onHome && <span className="text-neutral-400 dark:text-neutral-500 font-normal">03 — </span>}projects
-              </h2>
+              <SplitHeading num={onHome ? '03 —' : undefined}>projects</SplitHeading>
               {onHome ? (
-                <a href="/projects" onClick={navigate('/projects')} className={`underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-900 dark:hover:decoration-neutral-100 transition-colors ${focusRing}`}>all →</a>
+                <a href="/projects" onClick={navigate('/projects')} className={`underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-accent hover:text-accent transition-colors ${focusRing}`}>all →</a>
               ) : (
                 <span className="text-xs text-neutral-400 dark:text-neutral-500">{shown.length} / {PROJECTS.length}</span>
               )}
@@ -1056,9 +1318,10 @@ export default function App() {
                 <li key={p.title} className="py-6">
                   <a
                     href={p.url}
+                    data-cursor="view ↗"
                     target="_blank"
                     rel="noreferrer"
-                    className={`font-bold hover:underline underline-offset-4 ${focusRing}`}
+                    className={`font-bold hover:underline hover:text-accent underline-offset-4 ${focusRing}`}
                   >
                     {p.title} <span className="text-neutral-400 font-normal">↗</span>
                   </a>
@@ -1083,8 +1346,8 @@ export default function App() {
         {(onHome || path === '/services') && (
           <Reveal as="section" id="services" className="py-20">
             <div className="flex items-baseline justify-between mb-8">
-              <h2 className="text-xl font-bold tracking-tight">services</h2>
-              {onHome && <a href="/services" onClick={navigate('/services')} className={`underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-900 dark:hover:decoration-neutral-100 transition-colors ${focusRing}`}>all →</a>}
+              <SplitHeading>services</SplitHeading>
+              {onHome && <a href="/services" onClick={navigate('/services')} className={`underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-accent hover:text-accent transition-colors ${focusRing}`}>all →</a>}
             </div>
             {!onHome && (
               <p className="text-neutral-500 dark:text-neutral-400 mb-10">
@@ -1093,15 +1356,29 @@ export default function App() {
             )}
 
             <div className="space-y-10">
-              {SERVICES.map((svc) => (
+              {SERVICES.map((svc, i) => (
                 <div key={svc.title} className="border-t border-neutral-200 dark:border-neutral-800 pt-6">
-                  <h3 className="font-bold">{svc.title}</h3>
+                  <h3 className="font-bold">
+                    <span className="text-neutral-400 dark:text-neutral-500 mr-3 font-normal">0{i + 1}</span>
+                    {svc.title}
+                  </h3>
                   <p className="mt-2 text-neutral-600 dark:text-neutral-400">{svc.description}</p>
-                  <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-neutral-400 dark:text-neutral-500">
+                  {!onHome && <p className="mt-3 text-sm text-neutral-500 dark:text-neutral-400">{svc.timeline}</p>}
+                  <p className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs text-neutral-600 dark:text-neutral-300">
                     {svc.tags.map((t) => (
                       <span key={t}>#{t.toLowerCase().replace(/\s+/g, '-')}</span>
                     ))}
                   </p>
+                  {svc.example && (
+                    <a
+                      href={svc.example.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`mt-4 inline-block text-sm underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-accent hover:text-accent transition-colors ${focusRing}`}
+                    >
+                      {svc.example.label} →
+                    </a>
+                  )}
                 </div>
               ))}
             </div>
@@ -1126,9 +1403,21 @@ export default function App() {
                   </ol>
                 </div>
                 {PRICING_NOTE && <p className="mt-12 text-neutral-500 dark:text-neutral-400">{PRICING_NOTE}</p>}
+                <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-neutral-200 dark:border-neutral-800 pt-8">
+                  <p className="text-neutral-700 dark:text-neutral-300">Have a project in mind? Send me a message.</p>
+                  <Magnetic>
+                    <a
+                      href={`mailto:${EMAIL}`}
+                      data-cursor="mail"
+                      className={`inline-block rounded-md bg-neutral-900 dark:bg-neutral-100 px-5 py-2.5 text-sm font-semibold text-white dark:text-neutral-900 hover:opacity-90 transition-opacity ${focusRing}`}
+                    >
+                      Send me a message →
+                    </a>
+                  </Magnetic>
+                </div>
               </>
             )}
-            {!onHome && <QuoteBuilder email={EMAIL} serviceTitles={SERVICES.map((svc) => svc.title)} />}
+            {!onHome && <QuoteBuilder email={EMAIL} services={SERVICES} />}
           </Reveal>
         )}
 
@@ -1136,10 +1425,8 @@ export default function App() {
         {onHome && (
           <Reveal as="section" id="journey" className="py-20">
             <div className="flex items-baseline justify-between mb-8">
-              <h2 className="text-xl font-bold tracking-tight">
-                <span className="text-neutral-400 dark:text-neutral-500 font-normal">04 — </span>journey
-              </h2>
-              <a href="/journey" onClick={navigate('/journey')} className={`underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-900 dark:hover:decoration-neutral-100 transition-colors ${focusRing}`}>all →</a>
+              <SplitHeading num="04 —">journey</SplitHeading>
+              <a href="/journey" onClick={navigate('/journey')} className={`underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-accent hover:text-accent transition-colors ${focusRing}`}>all →</a>
             </div>
             <ol className="border-l border-neutral-200 dark:border-neutral-800 space-y-6">
               {JOURNEY.filter((g) => g.phase === 'Year 3')
@@ -1164,28 +1451,43 @@ export default function App() {
         {(onHome || path === '/blog') && (
           <Reveal as="section" id="blog" className="py-20">
             <div className="flex items-baseline justify-between mb-8">
-              <h2 className="text-xl font-bold tracking-tight">blog</h2>
-              {onHome && <a href="/blog" onClick={navigate('/blog')} className={`underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-900 dark:hover:decoration-neutral-100 transition-colors ${focusRing}`}>all →</a>}
+              <SplitHeading>blog</SplitHeading>
+              {onHome && <a href="/blog" onClick={navigate('/blog')} className={`underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-accent hover:text-accent transition-colors ${focusRing}`}>all →</a>}
             </div>
             {!onHome && (
               <p className="text-neutral-500 dark:text-neutral-400 mb-6">
-                Short notes on what I'm learning: React, Vue, Laravel, and the projects in between.
+                Notes from building and learning in public: what worked, what broke, and what I would do differently next time.
               </p>
             )}
-            <ul className="divide-y divide-neutral-200 dark:divide-neutral-800">
+            <ul className={onHome ? 'divide-y divide-neutral-200 dark:divide-neutral-800' : 'space-y-14'}>
               {(onHome ? BLOG_POSTS.slice(0, 2) : BLOG_POSTS).map((post) => (
-                <li key={post.title} className="py-6">
-                  <p className="text-xs text-neutral-400 dark:text-neutral-500">{post.date}</p>
-                  <h3 className="mt-1 font-bold">
+                <li
+                  key={post.title}
+                  className={onHome ? 'py-6' : 'border-t border-neutral-200 dark:border-neutral-800 pt-8'}
+                >
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    {post.date}
+                    {!onHome && post.body && <span> · {readTime(post.body)} min read</span>}
+                  </p>
+                  <h3 className={`mt-2 font-bold leading-snug ${onHome ? '' : 'text-lg'}`}>
                     {post.url ? <ExtLink href={post.url}>{post.title}</ExtLink> : post.title}
                   </h3>
-                  <p className="mt-2 text-neutral-600 dark:text-neutral-400">{post.excerpt}</p>
-                  {!onHome && post.body?.map((para, i) => (
-                    <p key={i} className="mt-4 text-neutral-600 dark:text-neutral-400">{para}</p>
-                  ))}
+                  <p className="mt-3 text-neutral-600 dark:text-neutral-400">{post.excerpt}</p>
+                  {!onHome && post.body && (
+                    <div className="mt-6 space-y-4 leading-relaxed text-neutral-700 dark:text-neutral-300">
+                      {post.body.map((para, i) => (
+                        <p key={i} className={i === 0 ? 'text-neutral-900 dark:text-neutral-100 font-medium' : ''}>
+                          {para}
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
+            {!onHome && (
+              <p className="mt-16 text-neutral-500 dark:text-neutral-400">More notes coming as I keep learning.</p>
+            )}
           </Reveal>
         )}
 
@@ -1193,9 +1495,7 @@ export default function App() {
 
         {(onHome || path === '/contact') && (
           <Reveal as="section" id="contact" className="py-20">
-            <h2 className="text-xl font-bold tracking-tight mb-2">
-              {onHome && <span className="text-neutral-400 dark:text-neutral-500 font-normal">05 — </span>}contact
-            </h2>
+            <SplitHeading num={onHome ? '05 —' : undefined} className="mb-2">contact</SplitHeading>
             <p className="text-neutral-600 dark:text-neutral-400 mb-4">
               Want to work together or just say hi? Email is the fastest way to reach me.
             </p>
@@ -1205,6 +1505,9 @@ export default function App() {
               <p>local time {localTime} (PHT)</p>
             </div>
 
+            <div className="mb-8">
+              <Terminal email={EMAIL} about={ABOUT_TEXT} projects={PROJECTS} />
+            </div>
             {FORM_ENDPOINT && !onHome && <ContactForm />}
 
             <ul className="space-y-2">
@@ -1212,11 +1515,12 @@ export default function App() {
                 <ContactLabel icon="mail">Email</ContactLabel>
                 <a
                   href={`mailto:${EMAIL}`}
-                  className={`underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-neutral-900 dark:hover:decoration-neutral-100 ${focusRing}`}
+                  className={`underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-accent hover:text-accent ${focusRing}`}
                 >
                   {EMAIL}
                 </a>
                 <button
+                  data-cursor={copied ? 'copied' : 'copy'}
                   onClick={copyEmail}
                   className={`ml-3 text-xs text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors ${focusRing}`}
                 >
@@ -1227,22 +1531,46 @@ export default function App() {
               <li className="flex items-center flex-wrap"><ContactLabel icon="linkedin">LinkedIn</ContactLabel><ExtLink href={LINKS.linkedin}>jay-mark-almojuela</ExtLink></li>
               <li className="flex items-center flex-wrap"><ContactLabel icon="instagram">Instagram</ContactLabel><ExtLink href={LINKS.instagram}>@exosennn</ExtLink></li>
             </ul>
+            <div className="mt-12 flex flex-wrap items-center gap-6 border-t border-neutral-200 dark:border-neutral-800 pt-8">
+              <OrbSphere size={128} marker={HOME_MARKER} />
+              <div className="space-y-1 text-xs text-neutral-500 dark:text-neutral-400">
+                {BASED_IN && <p>{BASED_IN}</p>}
+              </div>
+            </div>
           </Reveal>
         )}
 
         {/* GitHub */}
         {onHome && <GithubSection />}
 
-        {path === '/journey' && <JourneyTimeline groups={JOURNEY} />}
+        {path === '/journey' && (
+          <div className="flex items-center gap-4 mb-10">
+            <div className="vt-profile w-16 aspect-[4/5] bg-white rounded border border-neutral-200 dark:border-neutral-800 overflow-hidden shrink-0">
+              <img src="/profile.png" alt="" className="w-full h-full object-cover" />
+            </div>
+            <p className="text-neutral-700 dark:text-neutral-300 max-w-md">Everything started with a first C++ program. This is how it grew into building web apps.</p>
+          </div>
+        )}
+        {path === '/journey' && <JourneyTimeline groups={JOURNEY} next={JOURNEY_NEXT} />}
 
         </div>
 
         <footer className="py-10 border-t border-neutral-200 dark:border-neutral-800 text-xs text-neutral-400 dark:text-neutral-500">
           <TapToPlay>© {new Date().getFullYear()} Jay Mark Almojuela</TapToPlay>
+          <span className="mx-2">·</span>
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event('open-typetest'))}
+            className={`underline underline-offset-4 decoration-neutral-300 dark:decoration-neutral-600 hover:decoration-accent hover:text-accent transition-colors ${focusRing}`}
+          >
+            typing test
+          </button>
         </footer>
 
         {onHome && <MiniGame />}
+        {onHome && <Konami />}
         {onHome && <Tour />}
+        <TypeTest words={TECH_WORDS} />
 
         {/* Floating FAQ chatbot */}
         {chatMounted && (
